@@ -1,0 +1,8 @@
+# File yang tidak perlu di-push
+*.pdf
+*.exe
+*.msi
+*.log
+.env
+logs/
+tmp/
