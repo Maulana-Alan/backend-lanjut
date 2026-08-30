@@ -1,8 +1,8 @@
-package main
+package model
 
 import "time"
 
-// Student adalah data utama yang disimpan di memori
+// Student = data utama yang disimpan di tabel PostgreSQL
 type Student struct {
 	ID        int       `json:"id"`
 	NIM       string    `json:"nim"`
@@ -12,15 +12,14 @@ type Student struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// CreateStudentRequest dipakai untuk POST — semua field wajib diisi
+// CreateStudentRequest = body POST, semua field wajib
 type CreateStudentRequest struct {
 	NIM   string  `json:"nim"`
 	Name  string  `json:"name"`
 	Grade float64 `json:"grade"`
 }
 
-// ReplaceStudentRequest dipakai untuk PUT — semua field wajib, tipe biasa
-// Kalau field gak dikirim, dianggap dikosongkan
+// ReplaceStudentRequest = body PUT, semua field wajib, tipe biasa
 type ReplaceStudentRequest struct {
 	NIM      string  `json:"nim"`
 	Name     string  `json:"name"`
@@ -28,9 +27,7 @@ type ReplaceStudentRequest struct {
 	IsActive bool    `json:"is_active"`
 }
 
-// PatchStudentRequest dipakai untuk PATCH — field pakai pointer
-// nil = tidak dikirim = jangan diubah
-// non-nil = dikirim = ubah nilainya
+// PatchStudentRequest = body PATCH, pointer supaya bisa bedain nil vs nilai
 type PatchStudentRequest struct {
 	NIM      *string  `json:"nim,omitempty"`
 	Name     *string  `json:"name,omitempty"`
@@ -38,7 +35,7 @@ type PatchStudentRequest struct {
 	IsActive *bool    `json:"is_active,omitempty"`
 }
 
-// WebResponse adalah amplop standar untuk semua respons
+// WebResponse = amplop standar untuk semua respons
 type WebResponse struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`
@@ -47,7 +44,7 @@ type WebResponse struct {
 	Errors  any    `json:"errors,omitempty"`
 }
 
-// Meta berisi info paginasi untuk endpoint daftar
+// Meta = info paginasi
 type Meta struct {
 	Page       int `json:"page"`
 	Limit      int `json:"limit"`
@@ -55,7 +52,7 @@ type Meta struct {
 	TotalPages int `json:"total_pages"`
 }
 
-// ListQuery menampung semua parameter query string yang sudah dibersihkan
+// ListQuery = parameter query string yang sudah dibersihkan
 type ListQuery struct {
 	Page     int
 	Limit    int
@@ -63,4 +60,9 @@ type ListQuery struct {
 	Sort     string
 	Order    string
 	IsActive *bool
+}
+
+// Offset = hitung berapa baris yang dilewati untuk halaman ini
+func (q ListQuery) Offset() int {
+	return (q.Page - 1) * q.Limit
 }
